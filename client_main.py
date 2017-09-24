@@ -42,9 +42,17 @@ class Enemy(pygame.sprite.Sprite):
     def update(self):
         dx, dy = self.movepos[0] * self.speed, self.movepos[1] * self.speed
         self.rect = self.rect.move(dx, dy)
-        if not game_area.contains(self.rect):
-            print("An enemy died")
-            self.kill()
+
+        if self.rect[0] < game_area[0] or self.rect[0] + self.rect[2] > game_area[2]:
+            self.rect.move(-dx, -dy)
+            self.movepos[0] = -self.movepos[0]
+        if self.rect[1] < game_area[1] or self.rect[1] + self.rect[3] > game_area[3]:
+            self.rect.move(-dx, -dy)
+            self.movepos[1] = -self.movepos[1]
+
+        # if not game_area.contains(self.rect):
+            # print("An enemy died")
+            # self.kill()
 
 
 done=False
