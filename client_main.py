@@ -1,6 +1,7 @@
 import pygame
 import random
 from pygame.locals import *
+from world import world
 pygame.init()
 colors = pygame.color.THECOLORS
 screen = pygame.display.set_mode([1024, 1024])
@@ -10,8 +11,10 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.surface.Surface((32,32))
+        self.position = (500, 300)
+        self.movepos = (0, 0)
         self.image.fill(colors['green'])
-        self.rect = self.image.get_rect().move(350, 200)
+        self.rect = self.image.get_rect().move(self.position)
         self.speed = 5
 
     def update(self):
@@ -19,6 +22,7 @@ class Player(pygame.sprite.Sprite):
         next_pos = self.rect.move(dx, dy)
         if game_area.contains(next_pos):
             self.rect = self.rect.move(dx, dy)
+            self.position = self.position[0] + dx, self.position[1] + dy
 
 
 
@@ -53,12 +57,7 @@ enemy = Enemy()
 all_sprites.add(enemy)
 enemies.add(enemy)
 proximity_limit = (250, 250)
-
-
-
-total_map = [10000, 10000]
-
-
+game_world = world.World(screen, [100, 100], world_max_x=100, world_max_y=100)
 
 def find_relevant_entities(main_entity, all_entities):
     close_entities = []
@@ -83,7 +82,9 @@ while not done:
     for entity in all_sprites:
         entity.update()
 
-    screen.fill(colors['white'])
+    game_world.update_world_offset(player.position[0], player.position[1])
+    game_world.draw()
+    #screen.fill(colors['white'])
     for entity in all_sprites:
         screen.blit(entity.image, entity.rect.topleft)
 
