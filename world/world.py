@@ -19,7 +19,7 @@ class World:
         self.offset = (0,0)
 
     def load_tileset(self, image_path):
-        return image.load(os.path.join(image_path, 'tileset.bmp')).convert()
+        return image.load(os.path.join(image_path, 'tileset.png')).convert()
 
     def reset_tiles(self, max_x, max_y):
         return np.zeros((max_x, max_y))
