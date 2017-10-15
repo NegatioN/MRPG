@@ -6,6 +6,9 @@ import logging
 import math
 import json
 
+TILEMAP_PATH = os.path.join("world/tiles_raw", 'tileset.png')
+JSON_MAP_PATH = "world/maps/map.json"
+
 logger = logging.getLogger("Game")
 
 MAX_TILE_ID = 1
@@ -19,13 +22,13 @@ class World:
         self.screen = screen
         self.screen_tiles = scale_to_tiles(screen_size[0]), scale_to_tiles(screen_size[1])
         self.tile_holder = self.load_map_data()
-        self.tileset_bitmap = self.load_tileset("world/tiles_raw")
+        self.tileset_bitmap = self.load_tileset(TILEMAP_PATH)
         self.tileset_rect = self.tileset_bitmap.get_rect()
         self.offset = (0,0)
         self.prev_offset = self.offset
 
     def load_tileset(self, image_path):
-        return image.load(os.path.join(image_path, 'tileset.png')).convert()
+        return image.load(image_path).convert()
 
     def reset_tiles(self, max_x, max_y):
         return np.zeros((max_x, max_y))
@@ -37,7 +40,7 @@ class World:
         self.offset = (self.offset[0] + x, self.offset[1] + y)
 
     def render_tile(self, screen, x, y):
-        tile_id = self.tile_holder[x, y]
+        tile_id = self.tile_holder[x, y] - 1 # Temporary fix. Tiled outputs tiles with 1-index. we use 0-index like sane people.
         screen_pos = self.apply_offset(Rect(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT), self.offset)
         tileset_pos = Rect(tile_id * TILE_WIDTH, 0, TILE_WIDTH, TILE_HEIGHT)
         screen.blit(self.tileset_bitmap, screen_pos, tileset_pos)
@@ -47,7 +50,7 @@ class World:
 
     @staticmethod
     def load_map_data():
-        with open("world/maps/map.json") as f:
+        with open(JSON_MAP_PATH) as f:
             content = json.load(f)
         layer = content["layers"][0]
         width = layer["width"]
