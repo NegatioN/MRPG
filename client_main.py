@@ -14,7 +14,7 @@ debug = True
 logger.setLevel(logging.DEBUG if debug else logging.INFO)
 pygame.init()
 colors = pygame.color.THECOLORS
-screen_size = (1024, 1024)
+screen_size = (600, 600)
 
 screen = pygame.display.set_mode(screen_size)
 MAX_FRAMERATE = 60
@@ -29,7 +29,7 @@ enemy = enemy.Enemy()
 all_sprites.add(enemy)
 enemies.add(enemy)
 proximity_limit = (250, 250)
-game_world = world.World(screen, screen_size, world_max_x=1000, world_max_y=1000)
+game_world = world.World(screen, screen_size)
 game_world.update_world_offset(player.position[0], player.position[1])
 
 cam = world.Camera(*screen_size)

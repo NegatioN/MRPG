@@ -10,3 +10,7 @@ There needs to be:
 * Store player info, and some sort of registration.
 * combat between players and mobs.
 * PVP?
+
+
+## Proposed solutions
+* [Tiled](https://thorbjorn.itch.io/tiled) will be used as a map editor. No reason to reinvent this part.

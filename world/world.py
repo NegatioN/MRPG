@@ -2,9 +2,9 @@ from pygame import image
 from pygame import Rect
 import os
 import numpy as np
-import random
 import logging
 import math
+import json
 
 logger = logging.getLogger("Game")
 
@@ -15,15 +15,12 @@ def scale_to_tiles(pixel_size):
     return int(math.ceil(pixel_size / TILE_WIDTH)) + 1
 
 class World:
-    def __init__(self, screen, screen_size, world_max_x=100, world_max_y=100):
+    def __init__(self, screen, screen_size):
         self.screen = screen
         self.screen_tiles = scale_to_tiles(screen_size[0]), scale_to_tiles(screen_size[1])
-        self.total_world_width = TILE_WIDTH * world_max_x
-        self.total_world_height = TILE_HEIGHT * world_max_y
-        self.tile_holder = self.reset_tiles(world_max_x, world_max_y)
+        self.tile_holder = self.load_map_data()
         self.tileset_bitmap = self.load_tileset("world/tiles_raw")
         self.tileset_rect = self.tileset_bitmap.get_rect()
-        self.randomize()
         self.offset = (0,0)
         self.prev_offset = self.offset
 
@@ -46,19 +43,19 @@ class World:
         screen.blit(self.tileset_bitmap, screen_pos, tileset_pos)
 
     def world_size_in_pixels(self):
-        return (self.total_world_width, self.total_world_height)
+        return self.total_world_width, self.total_world_height
 
+    @staticmethod
+    def load_map_data():
+        with open("world/maps/map.json") as f:
+            content = json.load(f)
+        layer = content["layers"][0]
+        width = layer["width"]
+        height = layer["height"]
 
-    def randomize(self):
-        # randomize all tiles
-        for y in range(self.tile_holder.shape[1]):
-            for x in range(self.tile_holder.shape[0]):
-                self.tile_holder[x,y] = random.randint(0,1)
+        data = layer["data"]
 
-        # example of 2d array slicing, ex: slicing whole column or row
-        # set a couple roads: one horizontal, one vertical.
-        self.tile_holder[1,:] = 2
-        self.tile_holder[:,2] = 2
+        return np.asarray(data).reshape(width, height)
 
     @staticmethod
     def apply_offset(screen_rect, offset):
