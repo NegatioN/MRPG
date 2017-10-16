@@ -87,7 +87,7 @@ class World:
 
 class Camera:
     def __init__(self, width, height):
-        self.camera_func = self.simple_camera
+        self.camera_func = self.complex_camera
         self.state = Rect(0, 0, width, height)
         self.HALF_WIDTH = int(width / 2)
         self.HALF_HEIGHT = int(height / 2)
@@ -113,9 +113,10 @@ class Camera:
         _, _, w, h = camera
         l, t, _, _ = -l+self.HALF_WIDTH, -t+self.HALF_HEIGHT, w, h # center player
 
+        #TODO find somewhere better to scale to pixel-values for camera? Shouldn't need to be computed each time.
         l = min(0, l)                           # stop scrolling at the left edge
-        l = max(-(camera.width-self.WIN_WIDTH), l)   # stop scrolling at the right edge
-        t = max(-(camera.height-self.WIN_HEIGHT), t) # stop scrolling at the bottom
+        l = max(-((camera.width * TILE_WIDTH)-self.WIN_WIDTH), l)   # stop scrolling at the right edge
+        t = max(-((camera.height * TILE_HEIGHT)-self.WIN_HEIGHT), t) # stop scrolling at the bottom
         t = min(0, t)                           # stop scrolling at the top
 
         return Rect(l, t, w, h)
